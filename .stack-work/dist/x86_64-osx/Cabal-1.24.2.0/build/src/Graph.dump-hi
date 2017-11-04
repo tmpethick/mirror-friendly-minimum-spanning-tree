@@ -1,0 +1,86 @@
+
+==================== FINAL INTERFACE ====================
+2017-11-02 12:11:39.580597 UTC
+
+interface hard-project-0.1.0.0-F1RjQrpukxvAKBAzpUsqhT:Graph 8002
+  interface hash: c0b0717ead7940738a12fabafcd88b7a
+  ABI hash: fd5e80c2f7d7270863d95bef0d31735c
+  export-list hash: e06e9fa434908ceb8c9deb9a9bf94058
+  orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
+  flag hash: f6624f22fcdd76ed0ac6625466e2d712
+  sig of: Nothing
+  used TH splices: False
+  where
+exports:
+  Graph.edges
+  Graph.nodes
+module dependencies:
+package dependencies: array-0.5.1.1@array-0.5.1.1 base-4.9.1.0
+                      containers-0.5.7.1@containers-0.5.7.1
+                      deepseq-1.4.2.0@deepseq-1.4.2.0
+                      fgl-5.6.0.0@fgl-5.6.0.0-7hDKrnuXAeL5gWTTppBflt ghc-prim-0.5.0.0
+                      integer-gmp-1.0.0.1 transformers-0.5.2.0@transformers-0.5.2.0
+orphans: base-4.9.1.0:GHC.Base base-4.9.1.0:GHC.Float
+family instance modules: base-4.9.1.0:Control.Applicative
+                         base-4.9.1.0:Data.Complex base-4.9.1.0:Data.Either
+                         base-4.9.1.0:Data.Functor.Const base-4.9.1.0:Data.Functor.Identity
+                         base-4.9.1.0:Data.List.NonEmpty base-4.9.1.0:Data.Monoid
+                         base-4.9.1.0:Data.Semigroup base-4.9.1.0:Data.Type.Equality
+                         base-4.9.1.0:Data.Version base-4.9.1.0:Data.Void
+                         base-4.9.1.0:GHC.Exts base-4.9.1.0:GHC.Generics
+                         base-4.9.1.0:GHC.IO.Exception base-4.9.1.0:GHC.TypeLits
+                         containers-0.5.7.1@containers-0.5.7.1:Data.IntMap.Base
+                         containers-0.5.7.1@containers-0.5.7.1:Data.IntSet.Base
+                         containers-0.5.7.1@containers-0.5.7.1:Data.Map.Base
+                         containers-0.5.7.1@containers-0.5.7.1:Data.Sequence
+                         containers-0.5.7.1@containers-0.5.7.1:Data.Set.Base
+                         fgl-5.6.0.0@fgl-5.6.0.0-7hDKrnuXAeL5gWTTppBflt:Data.Graph.Inductive.PatriciaTree
+import  -/  base-4.9.1.0:GHC.Base c4231c43c07e46080a26bf94094c7aa1
+import  -/  base-4.9.1.0:Prelude 22dd289b8469a8fa8dc81cab7b237771
+import  -/  fgl-5.6.0.0@fgl-5.6.0.0-7hDKrnuXAeL5gWTTppBflt:Data.Graph.Inductive 168ce92695c51026f0307b5baf67fb41
+905af685706ef42c3c802b6daede19d5
+  $trModule :: GHC.Types.Module
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.Module Graph.$trModule2 Graph.$trModule1) -}
+8f8480057ce9a231cc15a9a67a6a412d
+  $trModule1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS "Graph"#) -}
+b7f2f4a413fedb7c42c14d500a9b07f8
+  $trModule2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS
+                   "hard-project-0.1.0.0-F1RjQrpukxvAKBAzpUsqhT"#) -}
+f383d405cea5b6f85edf6d6cf4b4106c
+  edges :: [(GHC.Integer.Type.Integer, GHC.Integer.Type.Integer, ())]
+  {- HasNoCafRefs, Strictness: m2,
+     Unfolding: (GHC.Types.:
+                   @ (GHC.Integer.Type.Integer, GHC.Integer.Type.Integer, ())
+                   Graph.edges1
+                   (GHC.Types.[]
+                      @ (GHC.Integer.Type.Integer, GHC.Integer.Type.Integer, ()))) -}
+f7b238e726c28664627e909c56e02a0b
+  edges1 :: (GHC.Integer.Type.Integer, GHC.Integer.Type.Integer, ())
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: ((Graph.edges3, Graph.edges2, GHC.Tuple.())) -}
+2dd6e5113ed25e9b194cff7888a2613f
+  edges2 :: GHC.Integer.Type.Integer
+  {- HasNoCafRefs, Unfolding: (1) -}
+065710d529aea5ea25990d7591d6ff8f
+  edges3 :: GHC.Integer.Type.Integer
+  {- HasNoCafRefs, Unfolding: (0) -}
+4607812ded170c9fd5a88bdd1247230d
+  nodes :: [(GHC.Integer.Type.Integer, ())]
+  {- Unfolding: (Graph.nodes_go Graph.edges3) -}
+0a84b71496ddc148a661fc2bacfdbe7d
+  nodes_go ::
+    GHC.Integer.Type.Integer -> [(GHC.Integer.Type.Integer, ())]
+  {- Arity: 1, Strictness: <S,U> -}
+vectorised variables:
+vectorised tycons:
+vectorised reused tycons:
+parallel variables:
+parallel tycons:
+trusted: none
+require own pkg trusted: False
+
