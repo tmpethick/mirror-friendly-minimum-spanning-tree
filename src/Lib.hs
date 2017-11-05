@@ -75,13 +75,17 @@ module Lib where
   toNodes (EdgePart (n1, n2, _)) = [n1, n2]
   toNodes (NodePart n) = [n]
 
-  partitionCombinations :: [PartitionPair a] -> [Edge]
+  partitionCombinations :: PartitionPair a -> [Edge]
   partitionCombinations (p1, p2) = (,) <$> toNodes p1 <*> toNodes p2
 
-  connectorsForPair :: [PartitionPair a] -> [Edge]
+  connectorsForPair :: PartitionPair a -> [Edge]
   connectorsForPair parts = filter (hasEdge g) (partitionCombinations parts)
   
-  flattenTuple tl = concat [[a,b] | (a,b) <- tl]
+  -- nps = pairNeighbors sps
+  -- connectors nps = fmap connectorsForPair nps
+  -- connectPartitions nps = foldr nps
+
+  -- flattenTuple tl = concat [[a,b] | (a,b) <- tl]
 
   -- subgraph (flattenTuple (connectorsForPair parts)) g
 
