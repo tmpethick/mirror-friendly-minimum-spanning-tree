@@ -1,9 +1,8 @@
-# hard-project
+# Mirror Friendly Minimum Spanning Tree
 
-add description of hard-project here
+This project uses [stack](https://docs.haskellstack.org/en/stable/install_and_upgrade/).
 
-
-To run
+## Execution
 
 ```
 stack build && stack exec -- hard-project "./data/test01.uwg" "./data/test02.uwg"

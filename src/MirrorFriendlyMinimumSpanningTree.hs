@@ -1,18 +1,20 @@
-{-# LANGUAGE TemplateHaskell, FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts #-}
 module MirrorFriendlyMinimumSpanningTree where
 
   import Data.Array
-  import qualified Data.Set as Set
-  import Control.Monad.IO.Class
-  import Debug.Trace
   import Data.List
-  import Control.Arrow ((>>>))
-  import Data.List.Unique
   import Data.Tuple.Select
-  import Control.Monad (void)
+  import qualified Data.Set as Set
+  
   import Text.Parsec
   import Text.Parsec.String
+  
+  import Control.Arrow ((>>>))
+  import Control.Monad (void)
+  import Control.Monad.IO.Class
+  
   import System.Exit
+  import Debug.Trace
 
   ------------------------
   -- Graph
@@ -34,6 +36,12 @@ module MirrorFriendlyMinimumSpanningTree where
   edges :: Graph a -> [Edge a]
   edges (Graph _ es) = es
 
+  unique :: Ord a => [a] -> [a]
+  unique = Set.toList . Set.fromList
+
+  extractNodes :: (Ord a) => [Edge a] -> [a]
+  extractNodes edges = unique $ fmap sel1 edges ++ fmap sel2 edges
+
   paths' :: (Eq a) => a -> a -> [Edge a] -> [[a]]
   paths' a b xs | a == b = [[a]]
                 | otherwise = concat [map (a :) $ paths' d b [x | x <- xs, x /= (c, d, e)]
@@ -54,7 +62,7 @@ module MirrorFriendlyMinimumSpanningTree where
   spantree :: (Eq a, Ord a) => Graph a -> [Graph a]
   spantree (Graph xs ys) = filter connected $ filter (not . cycles) $ filter nodes alltrees
     where
-      alltrees = [Graph (extractnodes edges) edges | edges <- powerset ys]
+      alltrees = [Graph (extractNodes edges) edges | edges <- powerset ys]
       nodes (Graph xs' ys') = length xs == length xs'
       cycles (Graph xs' ys') = any ((/=) 0 . length . flip cycle' ys') xs'
       connected (Graph (x':xs') ys') = not $ any null [paths' x' y' ys' | y' <- xs']
@@ -69,9 +77,6 @@ module MirrorFriendlyMinimumSpanningTree where
 
   lineEnd :: (Stream s m Char) => ParsecT s u m ()
   lineEnd = void $ strictSpaces >> endOfLine
-
-  -- file :: (Stream s m Char) => ParsecT s u m a -> ParsecT s u m a
-  -- file p = (p <* lineEnd) <* eof
   
   line :: Stream s m Char => ParsecT s u m a -> ParsecT s u m a
   line p = p <* lineEnd
@@ -88,15 +93,9 @@ module MirrorFriendlyMinimumSpanningTree where
     m <- line num
     edges <- tripletNum `sepEndBy` (lineEnd <|> eof) -- Format: `Node Node Weight`
     return (n, m, edges)
-
-  mkUniq :: Ord a => [a] -> [a]
-  mkUniq = Set.toList . Set.fromList
   
-  extractnodes :: (Ord a) => [Edge a] -> [a]
-  extractnodes edges = mkUniq $ fmap sel1 edges ++ fmap sel2 edges
-
   toGraph :: Ord a => (Integer, Integer, [Edge a]) -> (Graph a, Weights)
-  toGraph (n, m, edges) = (Graph (extractnodes edges) (snd edgesWithIx), weights)
+  toGraph (n, m, edges) = (Graph (extractNodes edges) (snd edgesWithIx), weights)
     where 
       edgesWithIx =                        foldr (\e (i, s) -> (i + 1, (sel1 e, sel2 e, i) : s)) (0, []) (reverse edges)
       weights     = array (0, m-1) $ snd $ foldr (\e (i, s) -> (i + 1, (i, sel3 e)         : s)) (0, []) (reverse edges)
@@ -122,7 +121,8 @@ module MirrorFriendlyMinimumSpanningTree where
   totalWeight ws st = max (sum $ fmap (weight ws) (edges st)) 
                           (sum $ fmap (mirrorWeight ws) (edges st))
 
-  -- Use foldl1 instead foldr1
+  -- Uses `foldl1` instead `foldr1` to avoid storing all generated tree.
+  -- See Notes in: https://hackage.haskell.org/package/base-4.10.0.0/docs/src/Data.Foldable.html#foldl1
   minimumBy' :: Foldable t => (a -> a -> Ordering) -> t a -> a
   minimumBy' cmp = foldl1 min'
     where min' x y = case cmp x y of
@@ -141,5 +141,6 @@ module MirrorFriendlyMinimumSpanningTree where
     parsed <- parseGraphFile fileName
     let (gr, ws) = toGraph parsed
     let (w, mgr) = mst ws $ spantree gr
+    putStrLn $ "Problem: " ++ fileName
     print w
     return (mgr, ws)
