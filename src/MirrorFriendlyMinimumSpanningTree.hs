@@ -18,9 +18,6 @@ module MirrorFriendlyMinimumSpanningTree where
   -- Graph
   ------------------------
  
-  -- Modified from                https://mfukar.github.io/2015/09/15/haskellxii.html
-  -- As answer to Problem 83 from https://wiki.haskell.org/99_questions/80_to_89
-  -- Assumed undirected
   type EdgeIx = Integer
   type Weight = Integer
   type Weights = Array EdgeIx Weight
@@ -52,6 +49,8 @@ module MirrorFriendlyMinimumSpanningTree where
   powerset [] = [[]]
   powerset (x:xs) = [x:ps | ps <- powerset xs] ++ powerset xs
 
+  -- Assumed undirected
+  -- Modifed version of answer to Problem 83: https://wiki.haskell.org/99_questions/80_to_89
   spantree :: (Eq a, Ord a) => Graph a -> [Graph a]
   spantree (Graph xs ys) = filter connected $ filter (not . cycles) $ filter nodes alltrees
     where
@@ -60,17 +59,6 @@ module MirrorFriendlyMinimumSpanningTree where
       cycles (Graph xs' ys') = any ((/=) 0 . length . flip cycle' ys') xs'
       connected (Graph (x':xs') ys') = not $ any null [paths' x' y' ys' | y' <- xs']
 
-  -- Test case from divide and conquer
-  nodes' = [0..5]
-  edges' = [(1,2,1+1),
-            (1,3,2+1),
-            (1,4,3+1),
-            (1,6,4+1),
-            (2,3,5+1),
-            (2,5,6+1),
-            (3,4,7+1),
-            (4,5,8+1)]
-    
   ------------------------
   -- Parser
   ------------------------
@@ -100,8 +88,6 @@ module MirrorFriendlyMinimumSpanningTree where
     m <- line num
     edges <- tripletNum `sepEndBy` (lineEnd <|> eof) -- Format: `Node Node Weight`
     return (n, m, edges)
-   
-  -- testParse = parse parser "()" "1\n2\n1 2 3\n1 2 3"
 
   mkUniq :: Ord a => [a] -> [a]
   mkUniq = Set.toList . Set.fromList
@@ -136,6 +122,7 @@ module MirrorFriendlyMinimumSpanningTree where
   totalWeight ws st = max (sum $ fmap (weight ws) (edges st)) 
                           (sum $ fmap (mirrorWeight ws) (edges st))
 
+  -- Use foldl1 instead foldr1
   minimumBy' :: Foldable t => (a -> a -> Ordering) -> t a -> a
   minimumBy' cmp = foldl1 min'
     where min' x y = case cmp x y of
@@ -150,17 +137,9 @@ module MirrorFriendlyMinimumSpanningTree where
   -- Main
   ------------------------
   
-  main = do
-    parsed <- parseGraphFile "./data/test/TestFile1.uwg"
-    -- parsed <- parseGraphFile "../data/test/TestFile8.uwg"
+  test fileName = do
+    parsed <- parseGraphFile fileName
     let (gr, ws) = toGraph parsed
     let (w, mgr) = mst ws $ spantree gr
     print w
-    print $ length $ edges mgr
-    print $ length $ nodes mgr
     return (mgr, ws)
-
-    -- parsed <- parseGraphFile "../data/test/TestFile1.uwg"
-    -- (gr, ws) = toGraph parsed
-    -- mst ws gr
- 
