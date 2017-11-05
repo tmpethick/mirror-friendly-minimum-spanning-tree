@@ -143,4 +143,5 @@ module MirrorFriendlyMinimumSpanningTree where
     let (w, mgr) = mst ws $ spantree gr
     putStrLn $ "Problem: " ++ fileName
     print w
+    print mgr
     return (mgr, ws)
