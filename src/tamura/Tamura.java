@@ -20,12 +20,12 @@ import graph.Node;
 public class Tamura {
 	
 	public static void main(String[] args) {
-//		args = new String[] { "data\\TestFile5.uwg" };
+//		args = new String[] { "data\\TestFile4.uwg", "data\\TestFile5.uwg" };
 		for (String arg : args) {
 			long start 	= System.currentTimeMillis();
 			int B 		= new Tamura().run(new Graph(arg));
 			long end 	= System.currentTimeMillis();
-			System.out.println(String.format("%s B: %d Time: %d", arg, B, end - start));
+			System.out.println(String.format("%s\tB:%4d\tTime:%5d", arg, B, end - start));
 		}
 	}
 	
