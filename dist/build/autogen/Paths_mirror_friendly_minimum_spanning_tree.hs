@@ -29,12 +29,12 @@ version :: Version
 version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
-bindir     = "C:\\Users\\olive\\AppData\\Roaming\\cabal\\bin"
-libdir     = "C:\\Users\\olive\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-8.2.1\\mirror-friendly-minimum-spanning-tree-0.1.0.0-8pzoAZyH4Gt2qePLCAL526"
-dynlibdir  = "C:\\Users\\olive\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-8.2.1"
-datadir    = "C:\\Users\\olive\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-8.2.1\\mirror-friendly-minimum-spanning-tree-0.1.0.0"
-libexecdir = "C:\\Users\\olive\\AppData\\Roaming\\cabal\\mirror-friendly-minimum-spanning-tree-0.1.0.0-8pzoAZyH4Gt2qePLCAL526\\x86_64-windows-ghc-8.2.1\\mirror-friendly-minimum-spanning-tree-0.1.0.0"
-sysconfdir = "C:\\Users\\olive\\AppData\\Roaming\\cabal\\etc"
+bindir     = "/home/oliver/.cabal/bin"
+libdir     = "/home/oliver/.cabal/lib/x86_64-linux-ghc-8.0.2/mirror-friendly-minimum-spanning-tree-0.1.0.0-ISnA8x0Nzv06YIKn1eNpet"
+dynlibdir  = "/home/oliver/.cabal/lib/x86_64-linux-ghc-8.0.2"
+datadir    = "/home/oliver/.cabal/share/x86_64-linux-ghc-8.0.2/mirror-friendly-minimum-spanning-tree-0.1.0.0"
+libexecdir = "/home/oliver/.cabal/libexec"
+sysconfdir = "/home/oliver/.cabal/etc"
 
 getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: IO FilePath
 getBinDir = catchIO (getEnv "mirror_friendly_minimum_spanning_tree_bindir") (\_ -> return bindir)
@@ -47,4 +47,4 @@ getSysconfDir = catchIO (getEnv "mirror_friendly_minimum_spanning_tree_sysconfdi
 getDataFileName :: FilePath -> IO FilePath
 getDataFileName name = do
   dir <- getDataDir
-  return (dir ++ "\\" ++ name)
+  return (dir ++ "/" ++ name)
