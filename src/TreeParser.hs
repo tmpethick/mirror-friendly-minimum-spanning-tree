@@ -42,6 +42,12 @@ unique = Set.toList . Set.fromList
 extractNodes :: (Ord a) => [Edge a] -> [a]
 extractNodes edges = unique $ fmap sel1 edges ++ fmap sel2 edges
 
+weight       ws (_, _, i) = ws ! i
+mirrorWeight ws (_, _, i) = ws ! ((snd . bounds) ws - i)
+
+totalWeight :: Weights -> SpanningTree a -> Weight
+totalWeight ws st = max (sum $ fmap (weight ws) (edges st)) 
+                        (sum $ fmap (mirrorWeight ws) (edges st))
 
 ------------------------
 -- Parser

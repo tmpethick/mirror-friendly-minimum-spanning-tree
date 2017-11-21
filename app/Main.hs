@@ -1,5 +1,22 @@
 module Main where
 
-import LinearMFMST
+import Control.Exception
+import Data.Time
+import System.Environment
+import qualified LinearMFMST as L
 
-main = test "data/test01.uwg"
+
+timer m = do 
+  start <- getCurrentTime
+  m
+  end <- getCurrentTime
+  print (diffUTCTime end start)
+
+timedTest fileName = timer (L.minimize fileName)
+
+
+main :: IO ()
+main = do
+  graphFileNames <- getArgs
+  mapM_ timedTest graphFileNames
+
