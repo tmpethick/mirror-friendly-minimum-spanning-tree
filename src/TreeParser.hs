@@ -49,6 +49,13 @@ totalWeight :: Weights -> SpanningTree a -> Weight
 totalWeight ws st = max (sum $ fmap (weight ws) (edges st)) 
                         (sum $ fmap (mirrorWeight ws) (edges st))
 
+paths' :: (Eq a) => a -> a -> [Edge a] -> [[a]]
+paths' a b xs | a == b = [[a]]
+              | otherwise = concat [map (a :) $ paths' d b [x | x <- xs, x /= (c, d, e)]
+                                    | (c, d, e) <- xs, c == a] ++ 
+                            concat [map (a :) $ paths' c b [x | x <- xs, x /= (c, d, e)]
+                                    | (c, d, e) <- xs, d == a]
+
 ------------------------
 -- Parser
 ------------------------

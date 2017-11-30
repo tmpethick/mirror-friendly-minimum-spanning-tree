@@ -18,24 +18,25 @@ minimize fileName = do
   let (gr, ws) = toGraph parsed
   putStrLn $ "Problem: " ++ fileName
   -- print gr
-  let mn = minimization gr
-  let cs = [ constraintEdges gr
-           , constraintB ws
-           , constraintBMirror ws] ++ (constraintNodes gr)
-  let result = simplex (Minimize mn) (Dense cs) (constraintBounds gr)
-  -- mapM_ print $ constraintNodes gr
-  case result of
-    Optimal (b, s) -> do
-      print s
-      let edges = fmap (round) $ tail s
-      print edges
-      print $ elems ws
-      print "Verifying equations"
-      let b = verifyEquations gr (0 : edges)
-      if b
-        then print $ totalWeight' ws edges
-        else print "Not a valid solution"
-    _              -> print "Unable to find solution"
+  print $ findB gr ws []
+  where 
+    connected gr es = and $ fmap (not . null) $ fmap (\x -> paths' 1 x es)  [2..(fromIntegral . length . nodes) gr]
+    intValues s = fmap (fromIntegral . round) s
+    getEdges gr s = fmap snd $ filter (\x -> if fst x == 1 then True else False) $ zip (tail $ intValues s) (edges gr)
+    linear gr ws lm = let mn = minimization gr
+                          cs = [ constraintEdges gr
+                                , constraintB ws
+                                , constraintBMirror ws] ++ (constraintNodes gr) ++ lm
+                    in simplex (Minimize mn) (Dense cs) (constraintBounds gr)
+    findB gr ws lm = 
+      case linear gr ws lm of 
+        Optimal (b, s) ->
+          if connected gr (getEdges gr s)
+            then head s
+            else findB gr ws (lm ++ [intValues s :<=: edgesCount gr])
+        _ -> -1
+      
+      
 
 listProduct :: Num a => [a] -> [a] -> [a]
 listProduct = zipWith (*)
@@ -78,8 +79,10 @@ numberOfEdeges gr = (0 : replicate count (fromIntegral limit))
     where count = ((length . edges) gr)
 
 constraintEdges :: Graph a -> Bound [Double]
-constraintEdges gr = (numberOfEdeges gr) :==: edgesCount
-  where edgesCount = fromIntegral ((((length . nodes) gr) - 1) * limit)
+constraintEdges gr = (numberOfEdeges gr) :==: (edgesCount gr)
+
+edgesCount :: Graph a -> Double
+edgesCount gr = fromIntegral ((((length . nodes) gr) - 1) * limit)
 
 -- Creates the equations to constraint B from the weights of the edges
 equationB :: Num a => Weights -> [a]
