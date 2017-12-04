@@ -131,7 +131,11 @@ public class Tamura {
 	private void output() {
 		int b = Math.max(T0.stream().mapToInt(Edge::getWeight).sum(), 
 						 T0.stream().mapToInt(Edge::getMirrorWeight).sum());
-		B = Math.min(B, b);
+		if (b < B)
+		{
+			B = b;
+			System.out.println(B);
+		}
 	}
 	
 	public static int dplus(Edge e) {
