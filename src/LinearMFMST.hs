@@ -4,6 +4,7 @@ import Numeric.LinearProgramming
 import Data.Array
 import Data.Tuple.Select
 import Control.Monad
+import Debug.Trace
 
 import TreeParser
 
@@ -11,30 +12,34 @@ import TreeParser
 toTree gr es = Graph (nodes gr) newEdges
   where
     newEdges = fmap snd $ filter (\x -> fst x == 1) $ zip es (edges gr)
-
+    
+intValues s = fmap (fromIntegral . round) s
+getEdges gr s = fmap snd $ filter (\x -> if fst x == 1 then True else False) $ zip (fmap round $ tail s) (edges gr)
+connected gr es = and $ fmap (not . null) $ fmap (\x -> paths' 1 x es)  [2..(fromIntegral . length . nodes) gr]
 -- compute
 minimize fileName = do
   parsed <- parseGraphFile fileName
   let (gr, ws) = toGraph parsed
   putStrLn $ "Problem: " ++ fileName
   -- print gr
-  print $ findB gr ws []
+  print $ findB gr ws 0 []
   where 
-    connected gr es = and $ fmap (not . null) $ fmap (\x -> paths' 1 x es)  [2..(fromIntegral . length . nodes) gr]
-    intValues s = fmap (fromIntegral . round) s
-    getEdges gr s = fmap snd $ filter (\x -> if fst x == 1 then True else False) $ zip (tail $ intValues s) (edges gr)
-    linear gr ws lm = let mn = minimization gr
-                          cs = [ constraintEdges gr
-                                , constraintB ws
-                                , constraintBMirror ws] ++ (constraintNodes gr) ++ lm
-                    in simplex (Minimize mn) (Dense cs) (constraintBounds gr)
-    findB gr ws lm = 
-      case linear gr ws lm of 
+    linear gr ws mb lm = let mn = minimization gr
+                             cs = [ constraintEdges gr
+                                  , constraintB ws
+                                  , constraintBMirror ws
+                                  , constraintMinB gr mb
+                                  ] ++ (constraintNodes gr) ++ lm
+                          in trace (show $ mb) $ simplex (Minimize mn) (Dense cs) (constraintBounds gr)
+    findB :: Graph Integer -> Weights -> Double -> [Bound [Double]] -> Double
+    findB gr ws mb lm = 
+      case linear gr ws mb lm of 
         Optimal (b, s) ->
           if connected gr (getEdges gr s)
             then head s
-            else findB gr ws (lm ++ [intValues s :<=: edgesCount gr])
-        _ -> -1
+            else findB gr ws (b + 1) (notEdgesBound gr s : lm)
+        _ -> undefined
+    notEdgesBound gr s = (0 : (tail $ intValues s)) :<=: (fromIntegral (((length . nodes) gr) - 2))
       
       
 
@@ -100,3 +105,7 @@ constraintBMirror ws = equationBMirror ws :>=: 0
 -- Create bounds for all the edges to be between 0 and 1
 constraintBounds :: Graph a -> Bounds
 constraintBounds gr = fmap (\x -> x :&: (0,1)) [2..((length . edges) gr) + 1]
+
+constraintMinB :: Graph a -> Double -> Bound [Double]
+constraintMinB gr mb = (1 : replicate count 0) :>=: mb
+    where count = ((length . edges) gr)
